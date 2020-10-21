@@ -5,3 +5,13 @@ The directions for using this are documented in the Hyperledger Fabric
 
 *NOTE:* After navigating to the documentation, choose the documentation version that matches your version of Fabric
 
+
+```bash
+# 1 peer
+./byfn1p.sh up -f docker-compose-cli-1org1peer.yaml 
+./byfn.sh down
+
+peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n mycc --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt -c '{"Args":["invoke","a","b","10"]}'
+
+peer chaincode query -C mychannel -n mycc -c '{"Args":["query","a"]}'
+```
