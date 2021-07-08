@@ -5,9 +5,13 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+ORG=$1
+CHANNEL_NAME=$2
+BCCSP=$3
+
 # import utils
-. scripts/envVar.sh
-. scripts/configUpdate.sh
+. scripts/envVar.sh ${BCCSP}
+. scripts/configUpdate.sh ${BCCSP}
 
 
 # NOTE: this must be run in a CLI container since it requires jq and configtxlator 
@@ -49,8 +53,6 @@ updateAnchorPeer() {
   successln "Anchor peer set for org '$CORE_PEER_LOCALMSPID' on channel '$CHANNEL_NAME'"
 }
 
-ORG=$1
-CHANNEL_NAME=$2
 setGlobalsCLI $ORG
 
 createAnchorPeerUpdate 

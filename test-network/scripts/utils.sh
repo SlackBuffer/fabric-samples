@@ -22,6 +22,9 @@ function printHelp() {
     println "    -i <imagetag> - Docker image tag of Fabric to deploy (defaults to \"latest\")"
     println "    -cai <ca_imagetag> - Docker image tag of Fabric CA to deploy (defaults to \"${CA_IMAGETAG}\")"
     println "    -verbose - Verbose mode"
+    println "    -b - bccsp SW/GM/MIX"
+    println "    -x - x509Plugin std/gmsm"
+    println "    -g - gmPlugin gmsm"
     println
     println "    -h - Print this message"
     println
@@ -40,6 +43,9 @@ function printHelp() {
     println "    -r <max retry> - CLI times out after certain number of attempts (defaults to 5)"
     println "    -d <delay> - CLI delays for a certain number of seconds (defaults to 3)"
     println "    -verbose - Verbose mode"
+    println "    -b - bccsp SW/GM/MIX"
+    println "    -x - x509Plugin std/gmsm"
+    println "    -g - gmPlugin gmsm"
     println
     println "    -h - Print this message"
     println
@@ -62,6 +68,9 @@ function printHelp() {
     println "    -ccep <policy>  - (Optional) Chaincode endorsement policy using signature policy syntax. The default policy requires an endorsement from Org1 and Org2"
     println "    -cccg <collection-config>  - (Optional) File path to private data collections configuration file"
     println "    -cci <fcn name>  - (Optional) Name of chaincode initialization function. When a function is provided, the execution of init will be requested and the function will be invoked."
+    println "    -b - bccsp SW/GM/MIX"
+    println "    -x - x509Plugin std/gmsm"
+    println "    -g - gmPlugin gmsm"
     println
     println "    -h - Print this message"
     println
@@ -91,6 +100,9 @@ function printHelp() {
     println "    -i <imagetag> - Docker image tag of Fabric to deploy (defaults to \"latest\")"
     println "    -cai <ca_imagetag> - Docker image tag of Fabric CA to deploy (defaults to \"${CA_IMAGETAG}\")"
     println "    -verbose - Verbose mode"
+    println "    -b - bccsp SW/GM/MIX"
+    println "    -x - x509Plugin std/gmsm"
+    println "    -g - gmPlugin gmsm"
     println
     println "    Used with \033[0;32mnetwork.sh deployCC\033[0m"
     println "    -c <channel name> - Name of channel to deploy chaincode to"

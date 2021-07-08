@@ -12,7 +12,7 @@
 #
 # prepending $PWD/../bin to PATH to ensure we are picking up the correct binaries
 # this may be commented out to resolve installed version of tools if desired
-export PATH=${PWD}/../bin:$PATH
+export PATH=${PWD}/../../build/bin/:$PATH
 export FABRIC_CFG_PATH=${PWD}/configtx
 export VERBOSE=false
 
@@ -49,10 +49,10 @@ NONWORKING_VERSIONS="^1\.0\. ^1\.1\. ^1\.2\. ^1\.3\. ^1\.4\."
 # binaries/images are available. In the future, additional checking for the presence
 # of go or other items could be added.
 function checkPrereqs() {
-  ## Check if your have cloned the peer binaries and configuration files.
+  ## Check if you have cloned the peer binaries and configuration files.
   peer version > /dev/null 2>&1
 
-  if [[ $? -ne 0 || ! -d "../config" ]]; then
+  if [[ $? -ne 0 ]]; then
     errorln "Peer binary and configuration files not found.."
     errorln
     errorln "Follow the instructions in the Fabric docs to install the Fabric Binaries:"
@@ -146,7 +146,11 @@ function createOrgs() {
     infoln "Creating Org1 Identities"
 
     set -x
-    cryptogen generate --config=./organizations/cryptogen/crypto-config-org1.yaml --output="organizations"
+    if [ "${BCCSP}" == "GM"  ]; then
+      cryptogen generate --config=./organizations/cryptogen/crypto-config-org1.yaml --output="organizations" --x509=${X509_PLUGIN} --bccsp=${BCCSP} --gm=${GM_PLUGIN}
+    elif  [ "${BCCSP}" == "SW"  ]; then
+      cryptogen generate --config=./organizations/cryptogen/crypto-config-org1.yaml --output="organizations" --x509=${X509_PLUGIN} --bccsp=${BCCSP}
+    fi
     res=$?
     { set +x; } 2>/dev/null
     if [ $res -ne 0 ]; then
@@ -156,7 +160,11 @@ function createOrgs() {
     infoln "Creating Org2 Identities"
 
     set -x
-    cryptogen generate --config=./organizations/cryptogen/crypto-config-org2.yaml --output="organizations"
+    if [ "${BCCSP}" == "GM"  ]; then
+      cryptogen generate --config=./organizations/cryptogen/crypto-config-org2.yaml --output="organizations" --x509=${X509_PLUGIN} --bccsp=${BCCSP} --gm=${GM_PLUGIN}
+    elif  [ "${BCCSP}" == "SW"  ]; then
+      cryptogen generate --config=./organizations/cryptogen/crypto-config-org2.yaml --output="organizations" --x509=${X509_PLUGIN} --bccsp=${BCCSP}
+    fi
     res=$?
     { set +x; } 2>/dev/null
     if [ $res -ne 0 ]; then
@@ -166,7 +174,11 @@ function createOrgs() {
     infoln "Creating Orderer Org Identities"
 
     set -x
-    cryptogen generate --config=./organizations/cryptogen/crypto-config-orderer.yaml --output="organizations"
+    if [ "${BCCSP}" == "GM"  ]; then
+      cryptogen generate --config=./organizations/cryptogen/crypto-config-orderer.yaml --output="organizations" --x509=${X509_PLUGIN} --bccsp=${BCCSP} --gm=${GM_PLUGIN}
+    elif  [ "${BCCSP}" == "SW"  ]; then
+      cryptogen generate --config=./organizations/cryptogen/crypto-config-orderer.yaml --output="organizations" --x509=${X509_PLUGIN} --bccsp=${BCCSP}
+    fi
     res=$?
     { set +x; } 2>/dev/null
     if [ $res -ne 0 ]; then
@@ -248,7 +260,15 @@ function createConsortium() {
   # Note: For some unknown reason (at least for now) the block file can't be
   # named orderer.genesis.block or the orderer will fail to launch!
   set -x
-  configtxgen -profile TwoOrgsOrdererGenesis -channelID system-channel -outputBlock ./system-genesis-block/genesis.block
+  if [ "${BCCSP}" == "GM"  ]; then
+    configtxgen -profile TwoOrgsOrdererGenesis -channelID system-channel -outputBlock ./system-genesis-block/genesis.block --bccsp=${BCCSP} --gm=${GM_PLUGIN}
+  elif  [ "${BCCSP}" == "SW"  ]; then
+    configtxgen -profile TwoOrgsOrdererGenesis -channelID system-channel -outputBlock ./system-genesis-block/genesis.block --bccsp=${BCCSP}
+  elif [ "${BCCSP}" == "MIX"  ]; then
+    configtxgen -configPath ./configtx-mix -profile TwoOrgsOrdererGenesis -channelID system-channel -outputBlock ./system-genesis-block/genesis.block --bccsp=GM --gm=${GM_PLUGIN}
+  else
+    fatalln "Unsupported BCCSP type"
+  fi
   res=$?
   { set +x; } 2>/dev/null
   if [ $res -ne 0 ]; then
@@ -267,8 +287,20 @@ function networkUp() {
   checkPrereqs
   # generate artifacts if they don't exist
   if [ ! -d "organizations/peerOrganizations" ]; then
-    createOrgs
-    createConsortium
+    if [ "${BCCSP}" == "MIX" ]; then
+      createConsortium
+    else
+      createOrgs
+      createConsortium
+    fi
+  fi
+
+  if [ "${BCCSP}" == "GM"  ]; then
+    if [ "${GM_PLUGIN}" == "gmsm" ]; then
+      COMPOSE_FILE_BASE=docker/docker-compose-test-net-gmsm.yaml
+    fi
+  elif [ "${BCCSP}" == "MIX" ]; then
+    COMPOSE_FILE_BASE=docker/docker-compose-test-net-gm-mix.yaml
   fi
 
   COMPOSE_FILES="-f ${COMPOSE_FILE_BASE}"
@@ -299,13 +331,13 @@ function createChannel() {
   # more to create the channel creation transaction and the anchor peer updates.
   # configtx.yaml is mounted in the cli container, which allows us to use it to
   # create the channel artifacts
-  scripts/createChannel.sh $CHANNEL_NAME $CLI_DELAY $MAX_RETRY $VERBOSE
+  scripts/createChannel.sh $CHANNEL_NAME $CLI_DELAY $MAX_RETRY $VERBOSE $BCCSP $GM_PLUGIN
 }
 
 
 ## Call the script to deploy a chaincode to the channel
 function deployCC() {
-  scripts/deployCC.sh $CHANNEL_NAME $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
+  scripts/deployCC.sh $CHANNEL_NAME $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE $BCCSP
 
   if [ $? -ne 0 ]; then
     fatalln "Deploying chaincode failed"
@@ -316,7 +348,7 @@ function deployCC() {
 # Tear down running network
 function networkDown() {
   # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
-  docker-compose -f $COMPOSE_FILE_BASE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA down --volumes --remove-orphans
+  docker-compose -f $COMPOSE_FILE_BASE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA -f docker/docker-compose-test-net-gmsm.yaml -f docker/docker-compose-test-net-gm-mix.yaml down --volumes --remove-orphans
   docker-compose -f $COMPOSE_FILE_COUCH_ORG3 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
   # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
@@ -382,6 +414,13 @@ IMAGETAG="latest"
 CA_IMAGETAG="latest"
 # default database
 DATABASE="leveldb"
+
+# default bccsp
+BCCSP="SW"
+# default x509
+X509_PLUGIN="std"
+# default gm
+GM_PLUGIN="gmsm"
 
 # Parse commandline args
 
@@ -471,6 +510,18 @@ while [[ $# -ge 1 ]] ; do
     CA_IMAGETAG="$2"
     shift
     ;;
+  -b )
+    BCCSP="$2"
+    shift
+    ;;
+  -x )
+    X509_PLUGIN="$2"
+    shift
+    ;;
+  -g )
+    GM_PLUGIN="$2"
+    shift
+    ;;
   -verbose )
     VERBOSE=true
     shift
@@ -483,6 +534,15 @@ while [[ $# -ge 1 ]] ; do
   esac
   shift
 done
+
+# set environment variables for cryptographic service provider
+
+export CORE_PEER_BCCSP_DEFAULT=${BCCSP}
+export CORE_PEER_X509PLUGINTYPE=${X509_PLUGIN}
+export CORE_PEER_BCCSP_SW_LIBRARY=${GM_PLUGIN}
+if [ "${BCCSP}" == "MIX" ]; then
+  export CORE_PEER_BCCSP_DEFAULT="GM"
+fi
 
 # Are we generating crypto material with this command?
 if [ ! -d "organizations/peerOrganizations" ]; then

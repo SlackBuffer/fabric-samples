@@ -1,13 +1,11 @@
 #!/bin/bash
 
-# imports  
-. scripts/envVar.sh
-. scripts/utils.sh
-
 CHANNEL_NAME="$1"
 DELAY="$2"
 MAX_RETRY="$3"
 VERBOSE="$4"
+BCCSP="$5"
+GM_PLUGIN="$6"
 : ${CHANNEL_NAME:="mychannel"}
 : ${DELAY:="3"}
 : ${MAX_RETRY:="5"}
@@ -17,9 +15,21 @@ if [ ! -d "channel-artifacts" ]; then
 	mkdir channel-artifacts
 fi
 
+# imports  
+. scripts/envVar.sh $BCCSP
+. scripts/utils.sh
+
 createChannelTx() {
 	set -x
-	configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/${CHANNEL_NAME}.tx -channelID $CHANNEL_NAME
+	if [ "${BCCSP}" == "GM"  ]; then
+		configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/${CHANNEL_NAME}.tx -channelID $CHANNEL_NAME --bccsp=${BCCSP} --gm=${GM_PLUGIN}
+	elif [ "${BCCSP}" == "SW"  ]; then
+		configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/${CHANNEL_NAME}.tx -channelID $CHANNEL_NAME --bccsp=${BCCSP}
+	elif [ "${BCCSP}" == "MIX" ]; then
+		configtxgen -configPath ./configtx-mix -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/${CHANNEL_NAME}.tx -channelID $CHANNEL_NAME --bccsp=GM --gm=${GM_PLUGIN}
+	else
+		fatalln "Unsupported BCCSP type" 
+	fi
 	res=$?
 	{ set +x; } 2>/dev/null
   verifyResult $res "Failed to generate channel configuration transaction..."
@@ -45,7 +55,6 @@ createChannel() {
 
 # joinChannel ORG
 joinChannel() {
-  FABRIC_CFG_PATH=$PWD/../config/
   ORG=$1
   setGlobals $ORG
 	local rc=1
@@ -66,16 +75,15 @@ joinChannel() {
 
 setAnchorPeer() {
   ORG=$1
-  docker exec cli ./scripts/setAnchorPeer.sh $ORG $CHANNEL_NAME 
+  # 这里不传 $BCCSP 变量，CRYPTO_DIR 通过挂载方式设置
+  docker exec cli ./scripts/setAnchorPeer.sh $ORG $CHANNEL_NAME
 }
 
-FABRIC_CFG_PATH=${PWD}/configtx
 
 ## Create channeltx
 infoln "Generating channel create transaction '${CHANNEL_NAME}.tx'"
 createChannelTx
 
-FABRIC_CFG_PATH=$PWD/../config/
 BLOCKFILE="./channel-artifacts/${CHANNEL_NAME}.block"
 
 ## Create channel
@@ -88,6 +96,11 @@ infoln "Joining org1 peer to the channel..."
 joinChannel 1
 infoln "Joining org2 peer to the channel..."
 joinChannel 2
+# MIX 时一家组织有两个 peer
+if [ "${BCCSP}" == "MIX" ]; then
+	joinChannel 11
+	joinChannel 21
+fi
 
 ## Set the anchor peers for each org in the channel
 infoln "Setting anchor peer for org1..."
