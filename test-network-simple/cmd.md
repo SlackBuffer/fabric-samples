@@ -37,6 +37,10 @@ peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
 
 ```bash
 docker network create docker_test
+
+peer chaincode install -n basic -v 1.0 -p github.com/hyperledger/fabric-samples/asset-transfer-basic/chaincode-go
+
+peer chaincode instantiate -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls true --cafile $ORDERER_TLS_ROOT_CERT -C mychannel -n basic -l golang -v 1.0 -c '{"Args":[]}' -P 'OR ('\''Org1MSP.peer'\'')'
 ```
 
 ### 清理残留数据
