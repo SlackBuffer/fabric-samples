@@ -32,3 +32,17 @@ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.exa
 
 peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
 ```
+
+## native
+
+```bash
+docker network create docker_test
+```
+
+### 清理残留数据
+
+```bash
+# test-network-simple
+./network.sh down
+sudo rm -rf debug/fabric-data/*
+```

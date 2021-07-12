@@ -5,10 +5,6 @@
 
 version: '2'
 
-volumes:
-  orderer.example.com:
-  peer0.org1.example.com:
-
 networks:
   test:
 
@@ -41,7 +37,7 @@ services:
         - ../system-genesis-block/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
         - ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
         - ../organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
-        - orderer.example.com:/var/hyperledger/production/orderer
+        - /home/ubuntu/go/src/github.com/hyperledger/fabric-samples/test-network-simple/debug/fabric-data/orderer.example.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
     networks:
@@ -77,7 +73,7 @@ services:
         - /var/run/docker.sock:/host/var/run/docker.sock
         - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/etc/hyperledger/fabric/msp
         - ../organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls:/etc/hyperledger/fabric/tls
-        - peer0.org1.example.com:/var/hyperledger/production
+        - /home/ubuntu/go/src/github.com/hyperledger/fabric-samples/test-network-simple/debug/fabric-data/peer0.org1.example.com:/var/hyperledger/production
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: peer node start
     ports:
