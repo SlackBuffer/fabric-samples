@@ -1,0 +1,69 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "peer0-2.2-sw-1org-1peer",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/peer",
+            "env": {
+                "CORE_VM_ENDPOINT": "unix:///var/run/docker.sock",
+                "CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE": "docker_test",
+                "FABRIC_LOGGING_SPEC": "INFO",
+                "CORE_PEER_TLS_ENABLED": "true",
+                "CORE_PEER_GOSSIP_USELEADERELECTION": "true",
+                "CORE_PEER_GOSSIP_ORGLEADER": "false",
+                "CORE_PEER_PROFILE_ENABLED": "true",
+                "CORE_PEER_TLS_CERT_FILE": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt",
+                "CORE_PEER_TLS_KEY_FILE": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key",
+                "CORE_PEER_TLS_ROOTCERT_FILE": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+                "CORE_PEER_ID": "peer0.org1.example.com",
+                "CORE_PEER_ADDRESS": "peer0.org1.example.com:7051",
+                "CORE_PEER_LISTENADDRESS": "0.0.0.0:7051",
+                "CORE_PEER_CHAINCODEADDRESS": "10.0.0.111:7052",
+                "CORE_PEER_CHAINCODELISTENADDRESS": "0.0.0.0:7052",
+                "CORE_PEER_GOSSIP_BOOTSTRAP": "",
+                "CORE_PEER_GOSSIP_EXTERNALENDPOINT": "peer0.org1.example.com:7051",
+                "CORE_PEER_LOCALMSPID": "Org1MSP",
+                "FABRIC_CFG_PATH": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/configtx",
+                "CORE_PEER_MSPCONFIGPATH": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp",
+                "CORE_PEER_FILESYSTEMPATH": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/fabric-data/peer0.org1.example.com",
+                "CORE_OPERATIONS_LISTENADDRESS": "127.0.0.1:11443",
+                "CORE_PEER_ENBLKROUTER": "true"
+            },
+            "args": ["node", "start"]
+        },
+        {
+            "name": "orderer-2.3-sw-1node-raft",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/orderer",
+            "env": {
+                "FABRIC_LOGGING_SPEC": "INFO",
+                "ORDERER_GENERAL_LISTENADDRESS": "0.0.0.0",
+                "ORDERER_GENERAL_GENESISMETHOD": "file",
+                "ORDERER_GENERAL_GENESISFILE": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/system-genesis-block/genesis.block",
+                "ORDERER_GENERAL_LOCALMSPID": "OrdererMSP",
+                "ORDERER_GENERAL_LOCALMSPDIR": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp",
+                "ORDERER_GENERAL_TLS_ENABLED": "true",
+                "ORDERER_GENERAL_TLS_PRIVATEKEY": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.key",
+                "ORDERER_GENERAL_TLS_CERTIFICATE": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt",
+                "ORDERER_GENERAL_TLS_ROOTCAS": "[/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt]",
+                "ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt",
+                "ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.key",
+                "ORDERER_GENERAL_CLUSTER_ROOTCAS": "[/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt]",
+                "FABRIC_CFG_PATH": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/configtx",
+                "ORDERER_GENERAL_LISTENPORT": "7050",
+                "ORDERER_OPERATIONS_LISTENADDRESS": "127.0.0.1:7443",
+                "ORDERER_FILELEDGER_LOCATION": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/fabric-data/orderer.example.com",
+                "ORDERER_CONSENSUS_WALDIR": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/fabric-data/orderer.example.com/etcdraft/wal",
+                "ORDERER_CONSENSUS_SNAPDIR": "/home/ubuntu/go/src/github.com/hyperledger/simple-fabric-gateway/network/test-network/fabric-data/orderer.example.com/etcdraft/snapshot"
+            }
+        }
+    ]
+}
