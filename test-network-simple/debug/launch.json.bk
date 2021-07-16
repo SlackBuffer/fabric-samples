@@ -318,7 +318,7 @@
                 "CORE_PEER_ENBLKROUTER": "true",
                 "CORE_PEER_BCCSP_DEFAULT": "GM",
                 "CORE_PEER_X509PLUGINTYPE": "gmsm",
-                "CORE_PEER_BCCSP_SW_LIBRARY": "gmsm"
+                "CORE_PEER_BCCSP_GM_IMPLTYPE": "gmsm"
             },
             "args": ["node", "start"]
         },
@@ -350,7 +350,7 @@
                 "ORDERER_CONSENSUS_SNAPDIR": "/home/ubuntu/go/src/github.com/hyperledger/fabric/_debug/orderer/orderer-data/0/etcdraft/snapshot",
                 "ORDERER_GENERAL_BCCSP_DEFAULT": "GM",
                 "ORDERER_GENERAL_X509PLUGINTYPE": "gmsm",
-                "ORDERER_GENERAL_BCCSP_SW_LIBRARY": "gmsm"
+                "ORDERER_GENERAL_BCCSP_GM_IMPLTYPE": "gmsm"
             }
         },
         {

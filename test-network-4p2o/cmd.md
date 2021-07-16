@@ -179,7 +179,7 @@ policyManager, err := policies.NewManagerImpl(RootGroupKey, policyProviderMap, c
 ```bash
 export CORE_PEER_BCCSP_DEFAULT=GM
 export CORE_PEER_X509PLUGINTYPE=gmsm
-export CORE_PEER_BCCSP_SW_LIBRARY=gmsm
+export CORE_PEER_BCCSP_GM_IMPLTYPE=gmsm
 
 # User1
 export CORE_PEER_TLS_ENABLED=true

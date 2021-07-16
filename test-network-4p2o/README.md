@@ -53,7 +53,7 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.examp
 export CORE_PEER_ADDRESS=localhost:7051
 export CORE_PEER_BCCSP_DEFAULT=GM
 export CORE_PEER_X509PLUGINTYPE=gmsm
-export CORE_PEER_BCCSP_SW_LIBRARY=gmsm
+export CORE_PEER_BCCSP_GM_IMPLTYPE=gmsm
 
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"InitLedger","Args":[]}'
 
@@ -67,7 +67,7 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org2.examp
 export CORE_PEER_ADDRESS=localhost:9051
 export CORE_PEER_BCCSP_DEFAULT=GM
 export CORE_PEER_X509PLUGINTYPE=gmsm
-export CORE_PEER_BCCSP_SW_LIBRARY=gmsm
+export CORE_PEER_BCCSP_GM_IMPLTYPE=gmsm
 
 peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
 ```
@@ -93,7 +93,7 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/crypto-config-gm/peerOrganizations/org1.ex
 export CORE_PEER_ADDRESS=peer0.org1.example.com:7051
 export CORE_PEER_BCCSP_DEFAULT=GM
 export CORE_PEER_X509PLUGINTYPE=gmsm
-export CORE_PEER_BCCSP_SW_LIBRARY=gmsm
+export CORE_PEER_BCCSP_GM_IMPLTYPE=gmsm
 
 peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile ${PWD}/crypto-config-gm/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel -n basic --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles ${PWD}/crypto-config-gm/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles ${PWD}/crypto-config-gm/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -c '{"function":"InitLedger","Args":[]}'
 
@@ -107,7 +107,7 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/crypto-config-gm/peerOrganizations/org2.ex
 export CORE_PEER_ADDRESS=peer0.org2.example.com:9051
 export CORE_PEER_BCCSP_DEFAULT=GM
 export CORE_PEER_X509PLUGINTYPE=gmsm
-export CORE_PEER_BCCSP_SW_LIBRARY=gmsm
+export CORE_PEER_BCCSP_GM_IMPLTYPE=gmsm
 
 peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
 ```

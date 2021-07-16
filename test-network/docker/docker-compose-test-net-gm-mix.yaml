@@ -40,7 +40,7 @@ services:
       - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       # gmsm 软国密
       - ORDERER_GENERAL_BCCSP_DEFAULT=GM
-      - ORDERER_GENERAL_BCCSP_SW_LIBRARY=gmsm
+      - ORDERER_GENERAL_BCCSP_GM_IMPLTYPE=gmsm
       - ORDERER_GENERAL_X509PLUGINTYPE=gmsm
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
@@ -252,7 +252,7 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - FABRIC_LOGGING_SPEC=INFO
       - CORE_PEER_BCCSP_DEFAULT=GM
-      - CORE_PEER_BCCSP_SW_LIBRARY=gmsm
+      - CORE_PEER_BCCSP_GM_IMPLTYPE=gmsm
       - CORE_PEER_X509PLUGINTYPE=gmsm
       #- FABRIC_LOGGING_SPEC=DEBUG
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
